@@ -1,18 +1,22 @@
 "use strict";
-const API_URL = 'https://icanhazdadjoke.com/';
 const TEXT_INIT = 'Anem a riure una mica...';
+const API = [
+    'https://icanhazdadjoke.com/',
+    'https://api.chucknorris.io/jokes/random'
+];
 document.getElementById('joke').innerHTML = TEXT_INIT;
 const reportAcudits = [];
 function nextJoke() {
+    const random = (Math.random() < 0.5) ? 0 : 1;
     const HTMLResponse = document.getElementById('joke');
     HTMLResponse.innerHTML == TEXT_INIT ? document.getElementById('scores').style.display = "inline" : false;
-    fetch(API_URL, {
+    fetch(API[random], {
         headers: {
             'Accept': 'application/json'
         }
     })
         .then(response => response.json())
-        .then(data => HTMLResponse.innerHTML = data.joke)
+        .then(data => HTMLResponse.innerHTML = (random == 0 ? data.joke : data.value))
         .catch(error => console.log(error));
 }
 function saveScore(score) {
