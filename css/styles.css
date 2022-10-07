@@ -1,3 +1,16 @@
 #scores {
     display: none;
 }
+
+#blob {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -55%);
+    height: 115%;
+    z-index: -1;
+}
+
+a {
+    text-decoration: none;
+}

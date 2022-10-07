@@ -9,14 +9,18 @@ const reportAcudits = [];
 function nextJoke() {
     const random = (Math.random() < 0.5) ? 0 : 1;
     const HTMLResponse = document.getElementById('joke');
-    HTMLResponse.innerHTML == TEXT_INIT ? document.getElementById('scores').style.display = "inline" : false;
+    const indexReport = reportAcudits.findIndex(element => element.joke == HTMLResponse.innerHTML);
+    HTMLResponse.innerHTML == TEXT_INIT || indexReport != -1 ? document.getElementById('scores').style.display = "inline" : false;
     fetch(API[random], {
         headers: {
             'Accept': 'application/json'
         }
     })
         .then(response => response.json())
-        .then(data => HTMLResponse.innerHTML = (random == 0 ? data.joke : data.value))
+        .then(data => {
+        HTMLResponse.innerHTML = (random == 0 ? data.joke : data.value);
+        randomBlob();
+    })
         .catch(error => console.log(error));
 }
 function saveScore(score) {
@@ -30,11 +34,12 @@ function saveScore(score) {
             date: date.toISOString()
         };
         reportAcudits.push(acudit);
+        document.getElementById('scores').style.display = "none";
         console.clear();
         console.log(reportAcudits);
     }
     else {
-        alert(`Error! Ja has valorat aquest acudit`);
+        alert(`Duplicat! Ja has valorat aquest acudit`);
     }
 }
 navigator.geolocation.getCurrentPosition(success, error);
@@ -61,22 +66,25 @@ function getWeather(lat, lon) {
         .then(data => {
         HTMLResponse.innerHTML = `
             <div class="row">
-                <div class="col-12">
-                    <p class="fs-5 fw-bold m-0 text-center">${data.name}</p>
-                </div>
-            </div>
-            <div class="row">
                 <div class="col-12 d-flex align-items-center justify-content-center">
                     <img width="50px" src="http://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png">
-                    <div class="fs-5 fw-bold">${data.main.temp.toFixed(1)} °C</div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-12">
-                    <p class="m-0 text-center">${data.weather[0].description.charAt(0).toUpperCase() + data.weather[0].description.slice(1)}</p>
+                    <div class="fs-5 fw-bold border-start border-dark ps-2">${data.main.temp.toFixed(1)} °C</div>
                 </div>
             </div>
             `;
     })
         .catch(error => console.log(error));
+}
+window.onload = randomBlob;
+let randomPrev = 0;
+function randomBlob() {
+    const blob = document.getElementById('blob');
+    const random = Math.floor(Math.random() * 4) + 1;
+    if (random != randomPrev) {
+        blob.style.background = `url(./svg/blob-${random}.svg) center no-repeat`;
+        randomPrev = random;
+    }
+    else {
+        randomBlob();
+    }
 }
